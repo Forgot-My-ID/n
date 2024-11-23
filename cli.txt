@@ -1,0 +1,30 @@
+Hostname> enable
+Hostname# configure terminal
+
+R1-ISP(config)#interface FastEthernet0/0
+R1-ISP(config-if)#ip address 192.168.23.110 255.255.255.240
+R1-ISP(config-if)#shutdown
+R1-ISP(config-if)#
+%LINK-5-CHANGED: Interface FastEthernet0/0, changed state to administratively dow
+R1-ISP(config-if)#no shutdown
+%LINK-5-CHANGED: Interface FastEthernet0/0, changed state to up
+R1-ISP(config-if)#exit
+
+R1-ISP(config)#interface Serial0/0/0
+R1-ISP(config-if)#ip address 192.168.23.122 255.255.255.252
+R1-ISP(config-if)#clock rate 64000
+R1-ISP(config-if)#
+R1-ISP>enable
+R1-ISP#
+R1-ISP#configure terminal
+Enter configuration commands, one per line.  End with CNTL/Z.
+R1-ISP(config)#
+R1-ISP(config)#ip route 192.168.23.0 255.255.255.252 192.168.23.121
+R1-ISP(config)#
+R1-ISP(config)#end
+R1-ISP#copy running-config startup-config
+Destination filename [startup-config]? 
+Building configuration...
+[OK]
+R1-ISP#
+%SYS-5-CONFIG_I: Configured from console by console

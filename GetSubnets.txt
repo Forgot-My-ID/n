@@ -1,0 +1,22 @@
+from ipaddress import IPv4Network, ip_address
+
+def getSubnet(base, base_prefix, hosts):
+ N = 2 ** (32 - base_prefix)
+ N_sub = 2**math.ceil(math.log2(hosts))
+ n1 = int(base_prefix + math.log2(N/N_sub))
+ net_addr = int(ip_address(base))
+ first_user = net_addr + 1
+ last_user = net_addr + N_sub - 2
+ special_addr = net_addr + N_sub -1
+ subnet_mask = IPv4Network(f"0.0.0.0/{n1}").netmask
+ print(f"Network address: {ip_address(net_addr)}")
+ print(f"First User: {ip_address(first_user)}")
+ print(f"Last User: {ip_address(last_user)}")
+ print(f"Special Address: {ip_address(special_addr)}")
+ print()
+ print(f"Prefix Length (n1): {n1}")
+ print(f"Subnet Mask: {subnet_mask}")
+
+
+
+getSubnet("192.168.23.0", 24, 60)
