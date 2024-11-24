@@ -1,3 +1,20 @@
+Perform interface configuration of the R1-ISP, R2-CENTRAL, and R3-ISP routers, the PCs, and the server according to the addressing scheme above.
+
+Configure the routers using the CLI. The router configuration must include "housekeeping" (hostname, passwords, banner), interfaces (Fast Ethernet and Serial), and routing (static route on R1-ISP, default route on R2-Central).
+Hint: R2-Central should have a static route in the following format:ip route 0.0.0.0 0.0.0.0 [R1-ISP serial interface address]
+R1-ISP should have a static route in the following format: ip route [R2-Central LAN network address] [R2-Central LAN subnet mask][R2-Central serial interface address]
+The following login passwords should all be set to "pstu" (no quotes): enable secret, console, and Telnet. The banners should say **This is lab router R1-ISP. Authorized access only.** and **This is lab router R2-Central. Authorized access only.**
+The static route on R1-ISP should point to the existing Student LAN subnet via R2-Central's serial interface IP address; the static route on R2-Central should be a default static route which points via R1-ISP's serial interface IP address. Whenever you configure a Cisco IOS device, be sure to save your configuration.
+
+On the SW 2A switch, configure the hostname, banner (**This is lab switch S2A-Central. Authorized access only.**), login passwords for access (enable secret password, console, and Telnet passwords all set to "pstu"), and management interface (interface vlan1). Whenever you configure a Cisco IOS device, be sure to save your configuration.
+For Hosts PCs, in addition to IP configuration, configure them to use DNS services. For the server, enable DNS services, use the domain name pstu.ac.bd, and enable HTTP services.
+R3-ISP with switch, configure a DHCP server as PSTU_DHCP_Server, with this subnet gateway, DNS and staring ip 192.168.1.96 subnet mask 255.255.255.224. Number of user 31
+A laptop and Printer has connected with this network through this DHCP server and will get IP from this DHCP server.
+As you work, use "Check Results" to see what components still need to be configured.
+
+
+Give proper steps to do these in cisco
+
 To configure the network according to the specified requirements, we'll go step-by-step for each device: routers, switch, and hosts. The configuration will focus on setting the appropriate IP addresses, routing, passwords, banners, and management interfaces for each device.
 
 ### 1. **R1-ISP Router Configuration**
