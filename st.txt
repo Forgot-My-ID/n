@@ -1,0 +1,186 @@
+To configure the network according to the specified requirements, we'll go step-by-step for each device: routers, switch, and hosts. The configuration will focus on setting the appropriate IP addresses, routing, passwords, banners, and management interfaces for each device.
+
+### 1. **R1-ISP Router Configuration**
+R1-ISP should have the following configurations:
+- Hostname: R1-ISP
+- Passwords: Enable secret, console, and Telnet password set to `pstu`
+- Banner: `This is lab router R1-ISP. Authorized access only.`
+- Interfaces: Fast Ethernet and Serial interfaces configured with the IP addresses according to the addressing scheme.
+- Static route to the R2-Central LAN via R2's serial interface.
+
+**Steps:**
+```bash
+R1-ISP# configure terminal
+R1-ISP(config)# hostname R1-ISP
+R1-ISP(config)# banner motd #This is lab router R1-ISP. Authorized access only.#
+R1-ISP(config)# enable secret pstu
+R1-ISP(config)# line con 0
+R1-ISP(config-line)# password pstu
+R1-ISP(config-line)# login
+R1-ISP(config-line)# exit
+R1-ISP(config)# line vty 0 4
+R1-ISP(config-line)# password pstu
+R1-ISP(config-line)# login
+R1-ISP(config-line)# exit
+
+R1-ISP(config)# interface fastEthernet0/0
+R1-ISP(config-if)# ip address [R1 LAN IP] [Subnet Mask]
+R1-ISP(config-if)# no shutdown
+R1-ISP(config-if)# exit
+
+R1-ISP(config)# interface serial0/0
+R1-ISP(config-if)# ip address [R1 serial IP] [Subnet Mask]
+R1-ISP(config-if)# clock rate [Clock Rate] (if it’s the DCE side)
+R1-ISP(config-if)# no shutdown
+R1-ISP(config-if)# exit
+
+R1-ISP(config)# ip route [R2 LAN network] [R2 LAN subnet mask] [R2 serial IP]
+
+R1-ISP(config)# end
+R1-ISP# write memory
+```
+
+### 2. **R2-Central Router Configuration**
+R2-Central should have:
+- Hostname: R2-Central
+- Passwords: Enable secret, console, and Telnet password set to `pstu`
+- Banner: `This is lab router R2-Central. Authorized access only.`
+- Interfaces: Fast Ethernet and Serial interfaces configured with the IP addresses.
+- A default static route pointing to R1-ISP’s serial interface.
+
+**Steps:**
+```bash
+R2-Central# configure terminal
+R2-Central(config)# hostname R2-Central
+R2-Central(config)# banner motd #This is lab router R2-Central. Authorized access only.#
+R2-Central(config)# enable secret pstu
+R2-Central(config)# line con 0
+R2-Central(config-line)# password pstu
+R2-Central(config-line)# login
+R2-Central(config-line)# exit
+R2-Central(config)# line vty 0 4
+R2-Central(config-line)# password pstu
+R2-Central(config-line)# login
+R2-Central(config-line)# exit
+
+R2-Central(config)# interface fastEthernet0/0
+R2-Central(config-if)# ip address [R2 LAN IP] [Subnet Mask]
+R2-Central(config-if)# no shutdown
+R2-Central(config-if)# exit
+
+R2-Central(config)# interface serial0/0
+R2-Central(config-if)# ip address [R2 serial IP] [Subnet Mask]
+R2-Central(config-if)# clock rate [Clock Rate] (if it’s the DCE side)
+R2-Central(config-if)# no shutdown
+R2-Central(config-if)# exit
+
+R2-Central(config)# ip route 0.0.0.0 0.0.0.0 [R1 serial IP]
+
+R2-Central(config)# end
+R2-Central# write memory
+```
+
+### 3. **R3-ISP Router Configuration**
+R3-ISP should have:
+- Hostname: R3-ISP
+- DHCP Server configuration to allocate IP addresses (starting from 192.168.1.97) with subnet mask 255.255.255.224 and DNS server.
+- The DHCP server should allocate IPs to devices connected to this network (laptop, printer).
+
+**Steps:**
+```bash
+R3-ISP# configure terminal
+R3-ISP(config)# hostname R3-ISP
+R3-ISP(config)# enable secret pstu
+R3-ISP(config)# line con 0
+R3-ISP(config-line)# password pstu
+R3-ISP(config-line)# login
+R3-ISP(config-line)# exit
+R3-ISP(config)# line vty 0 4
+R3-ISP(config-line)# password pstu
+R3-ISP(config-line)# login
+R3-ISP(config-line)# exit
+
+R3-ISP(config)# ip dhcp excluded-address 192.168.1.1 192.168.1.96
+
+R3-ISP(config)# ip dhcp pool PSTU_DHCP_Server
+R3-ISP(dhcp-config)# network 192.168.1.96 255.255.255.224
+R3-ISP(dhcp-config)# default-router 192.168.1.97
+R3-ISP(dhcp-config)# dns-server [DNS IP]
+R3-ISP(dhcp-config)# lease 0 0 1
+R3-ISP(dhcp-config)# exit
+
+R3-ISP(config)# interface vlan 1
+R3-ISP(config-if)# ip address 192.168.1.97 255.255.255.224
+R3-ISP(config-if)# no shutdown
+R3-ISP(config-if)# exit
+
+R3-ISP(config)# end
+R3-ISP# write memory
+```
+
+### 4. **SW2A-Switch Configuration**
+SW2A-Switch should have:
+- Hostname: S2A-Central
+- Banner: `This is lab switch S2A-Central. Authorized access only.`
+- Passwords: Enable secret, console, and Telnet password set to `pstu`
+- Configure management VLAN interface (`Vlan1`).
+
+**Steps:**
+```bash
+SW2A-Central# configure terminal
+SW2A-Central(config)# hostname S2A-Central
+SW2A-Central(config)# banner motd #This is lab switch S2A-Central. Authorized access only.#
+SW2A-Central(config)# enable secret pstu
+SW2A-Central(config)# line con 0
+SW2A-Central(config-line)# password pstu
+SW2A-Central(config-line)# login
+SW2A-Central(config-line)# exit
+SW2A-Central(config)# line vty 0 4
+SW2A-Central(config-line)# password pstu
+SW2A-Central(config-line)# login
+SW2A-Central(config-line)# exit
+
+SW2A-Central(config)# interface vlan 1
+SW2A-Central(config-if)# ip address [Switch Management IP] [Subnet Mask]
+SW2A-Central(config-if)# no shutdown
+SW2A-Central(config-if)# exit
+
+SW2A-Central(config)# end
+SW2A-Central# write memory
+```
+
+### 5. **PC Configuration**
+Each PC will need:
+- IP address
+- Subnet mask
+- Default gateway
+- DNS server
+
+For each PC:
+1. Configure the IP address, subnet mask, and default gateway according to the subnet.
+2. Configure DNS server IP (if specified).
+
+### 6. **Server Configuration**
+- Enable DNS services: `ip dns server`
+- Set domain name to `pstu.ac.bd`.
+- Enable HTTP services: `ip http server`.
+
+```bash
+Server# configure terminal
+Server(config)# ip dns server
+Server(config)# ip domain-name pstu.ac.bd
+Server(config)# ip http server
+Server(config)# end
+Server# write memory
+```
+
+### 7. **Verification and Testing**
+After completing the configurations:
+- Use `show ip interface brief` to verify interfaces on routers and switches.
+- Use `ping` to check connectivity between devices.
+- Test DHCP functionality by checking if laptops and printers are getting IP addresses.
+- Test DNS resolution using `nslookup`.
+
+Once everything is working, don’t forget to save configurations on all devices using `write memory`.
+
+This should complete the configuration for the devices as per the requirements.
